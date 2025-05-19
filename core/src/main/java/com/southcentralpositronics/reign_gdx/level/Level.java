@@ -160,17 +160,6 @@ public class Level extends Layer {
 		}
 	}
 
-//	public boolean tileCollision(int x, int y, int size, int xOffset, int yOffset) {
-//		boolean solid = false;
-//
-//		for (int c = 0; c < 4; c++) {
-//			int xt = (x - (c % 2 * size) + xOffset) >> 4;
-//			int yt = (y - (c / 2 * size) + yOffset) >> 4;
-//			solid = getTile(xt, yt).solid();
-//		}
-//		return solid;
-//	}
-
 	public boolean tileCollision(double x, double y, double size, double xDelta, double yDelta, double xOffset, double yOffset) {
 		boolean solid = false;
 

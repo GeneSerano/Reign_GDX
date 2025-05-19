@@ -30,8 +30,6 @@ public class AStarChaserMob extends Mob {
 		xa = 0;
 		ya = 0;
 
-//		int px = (int) level.getPlayer(0).getX();
-//		int py = (int) level.getPlayer(0).getY();
 		int px = (int) level.getClientPlayer().getX();
 		int py = (int) level.getClientPlayer().getY();
 
@@ -86,10 +84,4 @@ public class AStarChaserMob extends Mob {
 			animSprite = mobRight;
 		}
 	}
-
-//	public void render(Screen screen) {
-//		int offset = 16;
-//		sprite = animSprite.getSprite();
-//		screen.renderMob((int) x - offset, (int) y - offset, this);
-//	}
 }

@@ -9,7 +9,6 @@ import com.southcentralpositronics.reign_gdx.events.EventListener;
 import com.southcentralpositronics.reign_gdx.events.types.MousePressedEvent;
 import com.southcentralpositronics.reign_gdx.events.types.MouseReleasedEvent;
 import com.southcentralpositronics.reign_gdx.graphics.LibGDXAnimatedSprite;
-import com.southcentralpositronics.reign_gdx.graphics.ui.UIMiniMap;
 import com.southcentralpositronics.reign_gdx.input.Keyboard;
 import com.southcentralpositronics.reign_gdx.input.Mouse;
 
@@ -21,7 +20,6 @@ public class PlayerMob extends Mob implements EventListener {
     private final String    name;
     private final double    speed    = 2;
     private       boolean   shooting = false;
-    private       UIMiniMap miniMap;
     public        long      score    = 0;
 
     public PlayerMob(String name, Keyboard input) {
@@ -48,7 +46,6 @@ public class PlayerMob extends Mob implements EventListener {
 
     @Override
     public void update() {
-        if (level != null && miniMap != null) miniMap.init(level);
 
         double xa = 0, ya = 0;
         if (input.up) {

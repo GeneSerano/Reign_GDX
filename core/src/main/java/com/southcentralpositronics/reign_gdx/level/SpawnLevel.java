@@ -1,11 +1,6 @@
 package com.southcentralpositronics.reign_gdx.level;
 
-import com.southcentralpositronics.reign_gdx.graphics.TileLoader;
 import com.southcentralpositronics.reign_gdx.level.tile.Tile;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Map;
 
 public class SpawnLevel extends Level {
 

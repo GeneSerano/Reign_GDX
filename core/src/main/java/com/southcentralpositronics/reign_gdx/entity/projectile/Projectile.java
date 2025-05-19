@@ -29,16 +29,6 @@ public abstract class Projectile extends Entity {
 	public void update() {
 		int nextX = (int) (x + nx);
 		int nextY = (int) (y + ny);
-//		PlayerMob player      = level.getClientPlayer();
-//		int       playerDistX = (int) Math.abs(x - player.getX());
-//		int       playerDistY = (int) Math.abs(y - player.getY());
-//		int       clipDist    = 2;
-
-//		if (!(firedBy instanceof PlayerMob)) {
-//			if (playerDistX < clipDist || playerDistY < clipDist) {
-//				remove();
-//			}
-//		}
 		boolean collision = level.tileCollision(x, y, 7, nx, ny, -8, -8); //xO5yO4
 		if (collision) remove();
 		if (!removed) move();

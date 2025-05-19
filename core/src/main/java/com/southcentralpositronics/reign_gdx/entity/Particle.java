@@ -19,13 +19,7 @@ public class Particle extends Entity {
 		this.life = life + random.nextInt(0, 15);
 		this.xa   = random.nextGaussian();
 		this.ya   = random.nextGaussian();
-//		this.xa = random.nextDouble(-1.0, 1.0);
-//		this.ya = random.nextDouble(-1.0, 1.0);
 		this.zz = random.nextFloat() + 2.0;
-
-//		if (angle < 0 && this.xa < 0) this.xa *= -1;
-//		if (angle < 0 && this.ya < 0) this.ya *= -1;
-
 
 		sprite = Sprite.particle_normal;
 		PlayerMob player = level.getClientPlayer();
@@ -57,12 +51,6 @@ public class Particle extends Entity {
 	}
 
 	private void move(double xDelta, double yDelta) {
-//		if (collision(xDelta, yDelta)) {
-//			this.xa *= -1;
-//			this.ya *= -1;
-//			this.za *= -1;
-//		}
-
 		if (collision(xa, 0)) {
 			this.xa *= -1;
 		}
@@ -77,29 +65,6 @@ public class Particle extends Entity {
 	}
 
 	public boolean collision(double xb, double yb) {
-//		boolean solid = false;
-//		int     ix, iy;
-//
-//		for (int c = 0; c < 4; c++) {
-//			double xt = ((xb) - (c % 2 * 16)) / 16;
-//			double yt = ((yb) - (c / 2 * 16)) / 16;
-//
-//			if (c % 2 == 0) {
-//				ix = (int) Math.floor(xt);
-//			} else {
-//				ix = (int) Math.ceil(xt);
-//			}
-//			if (c / 2 == 0) {
-//				iy = (int) Math.floor(yt);
-//			} else {
-//				iy = (int) Math.ceil(yt);
-//			}
-//
-//			if (level.getTile(ix, iy).solid()) {
-//				solid = true;
-//			}
-//		}
-//		return solid;
 		return level.tileCollision(xx, yy, 16, xb, yb + za, 0, 2.5);
 	}
 

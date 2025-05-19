@@ -19,7 +19,7 @@ import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Game extends Canvas implements Runnable, EventListener {
+public class Game extends Canvas implements Runnable {
 	final        JFrame        frame;
 	private final        Keyboard      keyboard;
 	private final        Level         level;
@@ -35,11 +35,9 @@ public class Game extends Canvas implements Runnable, EventListener {
 	public static        int           scale            = 3;
 	public static        String        title            = "Reign";
 	public static        int           screenCenterX    = width / 2;
-	private static final UIManager     uiManager        = new UIManager();
 	private final        BufferedImage image            = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 	private final        int[]         pixels           = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 	private       boolean     running    = false;
-	private final List<Layer> layerStack = new ArrayList<Layer>();
 
 	public Game() {
 		screenCenter[0] = getWindowWidth() / 2;
@@ -52,7 +50,6 @@ public class Game extends Canvas implements Runnable, EventListener {
 		frame    = new JFrame();
 		keyboard = new Keyboard();
 		level    = Level.spawn;
-		addLayer(level);
 		TileCoordinates playerSpawnPoint = new TileCoordinates(20, 42);
 		player = new PlayerMob(playerSpawnPoint.getX(), playerSpawnPoint.getY(), "King Steve", keyboard);
 		level.add(player);
@@ -70,13 +67,6 @@ public class Game extends Canvas implements Runnable, EventListener {
 		return height * scale;
 	}
 
-	public static UIManager getUiManager() {
-		return uiManager;
-	}
-
-	public void addLayer(Layer layer) {
-		layerStack.add(layer);
-	}
 
 	public synchronized void start() {
 		running = true;
@@ -125,9 +115,6 @@ public class Game extends Canvas implements Runnable, EventListener {
 
 	private void update() {
 		keyboard.update();
-		uiManager.update();
-
-		for (Layer layer : layerStack) layer.update();
 
 		if (keyboard.esc) {
 			System.exit(0);
@@ -149,8 +136,6 @@ public class Game extends Canvas implements Runnable, EventListener {
 
 		level.setScroll((int) xScroll, (int) yScroll);
 
-		for (Layer layer : layerStack) layer.render(screen);
-
 		System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 
 		int mouseX      = Mouse.getX();
@@ -169,7 +154,6 @@ public class Game extends Canvas implements Runnable, EventListener {
 		g.drawString("Mouse:       X: " + mouseX + "   Y: " + mouseY + " B: " + Mouse.getMouseButton(), 32, 32);
 		g.drawString("Player:      X: " + playerX + " Y: " + playerY, 32, 48);
 		g.drawString("Player Tile: X: " + playerTileX + "   Y: " + playerTileY, 32, 48 + 16);
-		uiManager.render(g);
 
 		g.dispose();
 		bs.show();
@@ -183,13 +167,6 @@ public class Game extends Canvas implements Runnable, EventListener {
 			thread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void onEvent(Event event) {
-		for (int i = layerStack.size() - 1; i >= 0; i--) {
-			layerStack.get(i).onEvent(event);
 		}
 	}
 }
