@@ -1,7 +1,7 @@
 package com.southcentralpositronics.reign_gdx.entity.projectile;
 
 import com.southcentralpositronics.reign_gdx.entity.Entity;
-import com.southcentralpositronics.reign_gdx.graphics.Sprite;
+
 
 public class SpellProjectile extends Projectile {
 

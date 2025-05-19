@@ -1,7 +1,7 @@
 package com.southcentralpositronics.reign_gdx.entity.mob;
 
-import com.southcentralpositronics.reign_gdx.graphics.AnimatedSprite;
-import com.southcentralpositronics.reign_gdx.graphics.SpriteSheet;
+import com.southcentralpositronics.reign_gdx.graphics.LibGDXAnimatedSprite;
+
 import com.southcentralpositronics.reign_gdx.level.tile.Node;
 import com.southcentralpositronics.reign_gdx.util.Vector2i;
 
@@ -15,10 +15,10 @@ public class AStarChaserMob extends Mob {
 	private       int        time  = 0;
 
 	public AStarChaserMob(int x, int y) {
-		mobUp           = new AnimatedSprite(SpriteSheet.dummy_up, 32, 32, 3);
-		mobDown         = new AnimatedSprite(SpriteSheet.dummy_down, 32, 32, 3);
-		mobLeft         = new AnimatedSprite(SpriteSheet.dummy_left, 32, 32, 3);
-		mobRight        = new AnimatedSprite(SpriteSheet.dummy_right, 32, 32, 3);
+		mobUp           = new LibGDXAnimatedSprite(SpriteSheet.dummy_up, 32, 32, 3);
+		mobDown         = new LibGDXAnimatedSprite(SpriteSheet.dummy_down, 32, 32, 3);
+		mobLeft         = new LibGDXAnimatedSprite(SpriteSheet.dummy_left, 32, 32, 3);
+		mobRight        = new LibGDXAnimatedSprite(SpriteSheet.dummy_right, 32, 32, 3);
 		this.x          = x << 4;
 		this.y          = y << 4;
 		this.animSprite = mobDown;

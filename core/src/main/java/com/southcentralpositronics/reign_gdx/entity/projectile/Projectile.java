@@ -3,7 +3,7 @@ package com.southcentralpositronics.reign_gdx.entity.projectile;
 import com.southcentralpositronics.reign_gdx.entity.Entity;
 import com.southcentralpositronics.reign_gdx.entity.spawner.ParticleSpawner;
 import com.southcentralpositronics.reign_gdx.graphics.Screen;
-import com.southcentralpositronics.reign_gdx.graphics.Sprite;
+
 import com.southcentralpositronics.reign_gdx.level.Level;
 
 public abstract class Projectile extends Entity {

@@ -2,7 +2,7 @@ package com.southcentralpositronics.reign_gdx.entity;
 
 import com.southcentralpositronics.reign_gdx.entity.mob.PlayerMob;
 import com.southcentralpositronics.reign_gdx.graphics.Screen;
-import com.southcentralpositronics.reign_gdx.graphics.Sprite;
+
 import com.southcentralpositronics.reign_gdx.level.Level;
 
 public class Particle extends Entity {

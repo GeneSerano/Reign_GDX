@@ -1,8 +1,8 @@
 package com.southcentralpositronics.reign_gdx.entity;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.southcentralpositronics.reign_gdx.entity.spawner.ParticleSpawner;
 import com.southcentralpositronics.reign_gdx.graphics.Screen;
-import com.southcentralpositronics.reign_gdx.graphics.Sprite;
 import com.southcentralpositronics.reign_gdx.level.Level;
 
 import java.util.Random;
@@ -10,9 +10,9 @@ import java.util.Random;
 public class Entity {
 	protected final Random  random  = new Random();
 	protected       double  x;
-	protected       double  y;
-	protected       Sprite  sprite;
-	protected       Level   level;
+	protected double y;
+	protected Sprite sprite;
+	protected Level  level;
 	protected boolean removed = false;
 	protected Type    type;
 

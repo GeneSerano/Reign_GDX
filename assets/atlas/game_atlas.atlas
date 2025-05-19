@@ -1,0 +1,15 @@
+game_atlas.png
+size:128,32
+repeat:none
+spawn_sprite_sheet_bush
+bounds:56,2,16,16
+spawn_sprite_sheet_dark_wall
+bounds:2,2,16,16
+spawn_sprite_sheet_floor
+bounds:92,2,16,16
+spawn_sprite_sheet_grass
+bounds:38,2,16,16
+spawn_sprite_sheet_light_wall
+bounds:20,2,16,16
+spawn_sprite_sheet_water
+bounds:74,2,16,16
