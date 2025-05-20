@@ -2,7 +2,6 @@ package com.southcentralpositronics.reign_gdx.graphics;
 
 import com.badlogic.gdx.graphics.Pixmap;
 
-import java.util.HashMap;
 import java.util.Map;
 
 //public class TileMapBuilder {
@@ -58,18 +57,18 @@ public class TileMapBuilder {
         int tileCols = colorMap.getWidth();
         int tileRows = colorMap.getHeight();
 
-        int width = tileCols * tileSize;
+        int width  = tileCols * tileSize;
         int height = tileRows * tileSize;
 
         Pixmap result = new Pixmap(width, height, Pixmap.Format.RGBA8888);
 
         for (int y = 0; y < tileRows; y++) {
             for (int x = 0; x < tileCols; x++) {
-                int rgba = colorMap.getPixel(x, y);
-                int r = (rgba >> 24) & 0xFF;
-                int g = (rgba >> 16) & 0xFF;
-                int b = (rgba >> 8)  & 0xFF;
-                int a = rgba & 0xFF;
+                int rgba       = colorMap.getPixel(x, y);
+                int r          = (rgba >> 24) & 0xFF;
+                int g          = (rgba >> 16) & 0xFF;
+                int b          = (rgba >> 8) & 0xFF;
+                int a          = rgba & 0xFF;
                 int pixelColor = (a << 24) | (r << 16) | (g << 8) | b;
 
                 if (!tileSet.containsKey(pixelColor)) {

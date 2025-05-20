@@ -1,87 +1,78 @@
 package com.southcentralpositronics.reign_gdx.entity.mob;
 
-import com.southcentralpositronics.reign_gdx.graphics.LibGDXAnimatedSprite;
-
 import com.southcentralpositronics.reign_gdx.level.tile.Node;
 import com.southcentralpositronics.reign_gdx.util.Vector2i;
 
 import java.util.List;
 
 public class AStarChaserMob extends Mob {
-	private       double     xa    = 0;
-	private       double     ya    = 0;
-	private final double     speed = 0.5;
-	private       List<Node> path  = null;
-	private       int        time  = 0;
+    private       double     xa        = 0;
+    private       double     ya        = 0;
+    private final double     speed     = 0.5;
+    private       List<Node> path      = null;
+    private       float      pathTimer = 0f; // in seconds
 
-	public AStarChaserMob(int x, int y) {
-		mobUp           = new LibGDXAnimatedSprite(SpriteSheet.dummy_up, 32, 32, 3);
-		mobDown         = new LibGDXAnimatedSprite(SpriteSheet.dummy_down, 32, 32, 3);
-		mobLeft         = new LibGDXAnimatedSprite(SpriteSheet.dummy_left, 32, 32, 3);
-		mobRight        = new LibGDXAnimatedSprite(SpriteSheet.dummy_right, 32, 32, 3);
-		this.x          = x << 4;
-		this.y          = y << 4;
-		this.animSprite = mobDown;
-		sprite          = animSprite.getSprite();
-		type            = Type.ENEMY;
-	}
+    public AStarChaserMob(int x, int y) {
+        // These should be set by the caller after loading from TextureAtlas
+        this.x          = x << 4;
+        this.y          = y << 4;
+        this.animSprite = mobDown;
+        this.type       = Type.ENEMY;
+    }
 
-	private void move() {
-		xa = 0;
-		ya = 0;
+    private void calculatePath() {
+        int px = (int) level.getClientPlayer().getX();
+        int py = (int) level.getClientPlayer().getY();
 
-		int px = (int) level.getClientPlayer().getX();
-		int py = (int) level.getClientPlayer().getY();
+        Vector2i startVec = new Vector2i(((int) x) >> 4, ((int) y) >> 4);
+        Vector2i destVec  = new Vector2i(px >> 4, py >> 4);
 
-		int      svX      = ((int) x) >> 4; // divide by 16 but faster
-		int      svY      = ((int) y) >> 4;
-		Vector2i startVec = new Vector2i(svX, svY);
-		Vector2i destVec  = new Vector2i(px >> 4, py >> 4);
+        this.path = level.findPath(startVec, destVec);
+    }
 
-		if (time % 6 == 0) {
-			path = level.findPath(startVec, destVec);
-		}
+    private void moveAlongPath() {
+        xa = 0;
+        ya = 0;
 
-		if (path != null && !path.isEmpty()) {
-			Vector2i vector = path.getLast().tile;
-			if (x < vector.x << 4) xa += speed;
-			if (x > vector.x << 4) xa -= speed;
-			if (y < vector.y << 4) ya += speed;
-			if (y > vector.y << 4) ya -= speed;
-		}
+        if (path != null && !path.isEmpty()) {
+            Vector2i target = path.getLast().tile;
 
-		if (xa != 0 || ya != 0) {
-			move(xa, ya);
-			walking = true;
-		} else {
-			walking = false;
-		}
-	}
+            double targetX = target.x << 4;
+            double targetY = target.y << 4;
 
-	public void update() {
-		time++;
-		move();
+            if (x < targetX) xa += speed;
+            if (x > targetX) xa -= speed;
+            if (y < targetY) ya += speed;
+            if (y > targetY) ya -= speed;
+        }
 
-		if (walking) {
-			animSprite.update();
-		} else {
-			animSprite.setFrame(0);
-		}
+        if (xa != 0 || ya != 0) {
+            move(xa, ya);
+            walking = true;
+        } else {
+            walking = false;
+        }
+    }
 
+    public void update(float delta) {
+        pathTimer += delta;
 
-		if (ya < 0) {
-			dir        = Direction.UP;
-			animSprite = mobUp;
-		} else if (ya > 0) {
-			dir        = Direction.DOWN;
-			animSprite = mobDown;
-		}
-		if (xa < 0) {
-			dir        = Direction.LEFT;
-			animSprite = mobLeft;
-		} else if (xa > 0) {
-			dir        = Direction.RIGHT;
-			animSprite = mobRight;
-		}
-	}
+        // Recalculate path every ~0.1 seconds (6 times per second)
+        if (pathTimer >= 0.1f) {
+            calculatePath();
+            pathTimer = 0f;
+        }
+
+        moveAlongPath();
+
+        // Set direction based on movement
+        if (Math.abs(ya) > Math.abs(xa)) {
+            dir = ya < 0 ? Direction.UP : Direction.DOWN;
+        } else if (xa != 0) {
+            dir = xa < 0 ? Direction.LEFT : Direction.RIGHT;
+        }
+
+        // Call Mob's animation update
+        super.updateAnimation(delta, walking, dir);
+    }
 }

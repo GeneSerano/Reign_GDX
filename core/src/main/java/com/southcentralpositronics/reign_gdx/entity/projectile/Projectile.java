@@ -1,97 +1,92 @@
 package com.southcentralpositronics.reign_gdx.entity.projectile;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.southcentralpositronics.reign_gdx.entity.Entity;
 import com.southcentralpositronics.reign_gdx.entity.spawner.ParticleSpawner;
-import com.southcentralpositronics.reign_gdx.graphics.Screen;
-
 import com.southcentralpositronics.reign_gdx.level.Level;
 
 public abstract class Projectile extends Entity {
-	public final static int    SHOT_DELAY = 8;
-	protected final     double xOrig, yOrig;
-	protected double x, y, nx, ny, angle, speed, range, damage;
-	protected Sprite sprite;
-	protected Entity firedBy;
-	public    int    collisionOffsetX = -12;
-	public    int    collisionOffsetY = -2;
+    public static final float SHOT_DELAY = 0.125f; // 8 frames at 60fps
 
+    protected Vector2 position;
+    protected Vector2 origin;
+    protected Vector2 velocity;
 
-	public Projectile(double x, double y, double direction) {
-//        super();
-		xOrig  = x;
-		yOrig  = y;
-		angle  = direction;
-		this.x = x;
-		this.y = y;
+    protected float angle;
+    protected float speed;
+    protected float range;
+    protected float damage;
 
-	}
+    protected TextureRegion texture;
+    protected Entity        firedBy;
 
-	public void update() {
-		int nextX = (int) (x + nx);
-		int nextY = (int) (y + ny);
-		boolean collision = level.tileCollision(x, y, 7, nx, ny, -8, -8); //xO5yO4
-		if (collision) remove();
-		if (!removed) move();
-	}
+    public int collisionOffsetX = -12;
+    public int collisionOffsetY = -2;
 
-	public double getSpriteSize() {
-		return sprite.SIZE;
-	}
+    public Projectile(float x, float y, float direction) {
+        this.position = new Vector2(x, y);
+        this.origin   = new Vector2(x, y);
+        this.angle    = direction;
 
-	public Sprite getSprite() {
-		return sprite;
-	}
+        this.velocity = new Vector2((float) Math.cos(direction), (float) Math.sin(direction));
+    }
 
-	public void init(Level level) {
+    public void update(float delta) {
+        if (removed) return;
 
-		this.level = level;
-	}
+        Vector2 nextPos = position.cpy().add(velocity.x * speed, velocity.y * speed);
+        boolean hitWall = level.tileCollision(position.x, position.y, 7, velocity.x * speed, velocity.y * speed, -8, -8);
 
-	public Entity getFiredBy() {
-		return firedBy;
-	}
+        if (hitWall) {
+            remove();
+            return;
+        }
 
-	protected void move() {
-		x += nx;
-		y += ny;
+        position.set(nextPos);
 
-		if (distanceTraveled() > range) {
-			remove();
-		}
-	}
+        if (position.dst(origin) > range) {
+            remove();
+        }
+    }
 
-	public void hitTarget() {
-		// Remove from level
-		level.add(new ParticleSpawner(x, y, angle,10, 1000, level));
-		removed = true;
-	}
+    public void render(Batch batch) {
+        if (texture != null && !removed) {
+            batch.draw(texture, position.x + collisionOffsetX, position.y + collisionOffsetY);
+        }
+    }
 
-	public void remove() {
-		// Remove from level
-		level.add(new ParticleSpawner(x, y, angle,10, 250, level));
-		removed = true;
-	}
+    public void hitTarget() {
+        if (removed) return;
+        level.add(new ParticleSpawner(position.x, position.y, angle, 10, 1000, level));
+        removed = true;
+    }
 
-	private double distanceTraveled() {
-		double dist = 0;
-		double xDist, yDist, xyDist;
-		xDist  = Math.pow(x - xOrig, 2);
-		yDist  = Math.pow(y - yOrig, 2);
-		xyDist = Math.abs(xDist + yDist);
-		dist   = Math.sqrt(xyDist);
-		return dist;
-	}
+    @Override
+    public void remove() {
+        if (removed) return;
+        level.add(new ParticleSpawner(position.x, position.y, angle, 10, 250, level));
+        removed = true;
+    }
 
-	public void render(Screen screen) {
-		screen.renderProjectile((int) x + collisionOffsetX, (int) y + collisionOffsetY, this);
-	}
+    public void init(Level level) {
+        this.level = level;
+    }
 
-	public double getX() {
-		return x;
-	}
+    public Entity getFiredBy() {
+        return firedBy;
+    }
 
-	public double getY() {
-		return y;
-	}
+    public float getX() {
+        return position.x;
+    }
 
+    public float getY() {
+        return position.y;
+    }
+
+    public TextureRegion getTexture() {
+        return texture;
+    }
 }

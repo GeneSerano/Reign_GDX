@@ -1,74 +1,70 @@
 package com.southcentralpositronics.reign_gdx.entity;
 
-import com.southcentralpositronics.reign_gdx.entity.mob.PlayerMob;
-import com.southcentralpositronics.reign_gdx.graphics.Screen;
-
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.southcentralpositronics.reign_gdx.level.Level;
 
 public class Particle extends Entity {
-	protected double xx, yy, zz, xa, ya, za;
-	private final int    life;
-	private       int    time = 0;
-	private final Sprite sprite;
+    protected double xx, yy, zz, xa, ya, za;
+    private final int           life;
+    private       int           time = 0;
+    private final TextureRegion sprite;
 
-	public Particle(double x, double y, double angle, int life, Level level) {
-		this.x    = x;
-		this.y    = y;
-		this.xx   = x;
-		this.yy   = y;
-		this.life = life + random.nextInt(0, 15);
-		this.xa   = random.nextGaussian();
-		this.ya   = random.nextGaussian();
-		this.zz = random.nextFloat() + 2.0;
+    public Particle(double x, double y, double angle, int life, Level level, TextureRegion sprite) {
+        this.x    = x;
+        this.y    = y;
+        this.xx   = x;
+        this.yy   = y;
+        this.life = life + random.nextInt(0, 15);
+        this.xa   = random.nextGaussian();
+        this.ya   = random.nextGaussian();
+        this.zz   = random.nextFloat() + 2.0;
 
-		sprite = Sprite.particle_normal;
-		PlayerMob player = level.getClientPlayer();
+        this.sprite = sprite;  // Injected texture region
+        init(level);
+    }
 
-	}
+    public void update() {
+        time++;
+        if (time >= Integer.MAX_VALUE - 1) {
+            time = 0;
+        }
+        if (time > life) {
+            remove();
+        }
 
-	public void update() {
-		time++;
+        za -= 0.1;
+        if (zz <= 0) {
+            za *= -0.5;
+            xa *= 1;
+            ya *= 1;
+        }
 
-		if (time >= Integer.MAX_VALUE - 1) {
-			time = 0;
-		}
-		if (time > life) {
-			remove();
-		}
+        double xDelta = xx + xa;
+        double yDelta = yy + ya;
+        double zDelta = zz + za;
+        move(xDelta, yDelta + zDelta);
+    }
 
-		za -= 0.1;
-		if (zz <= 0) {
-//			zz = 0;
-			za *= -0.5;
-			xa *= 1;
-			ya *= 1;
-		}
+    private void move(double xDelta, double yDelta) {
+        if (collision(xa, 0)) {
+            this.xa *= -1;
+        }
+        if (collision(0, ya)) {
+            this.ya *= -1;
+            this.za *= -1;
+        }
 
-		double xDelta = xx + xa;
-		double yDelta = yy + ya;
-		double zDelta = zz + za;
-		move(xDelta, yDelta + zDelta);
-	}
+        this.xx += xa;
+        this.yy += ya;
+        this.zz += za;
+    }
 
-	private void move(double xDelta, double yDelta) {
-		if (collision(xa, 0)) {
-			this.xa *= -1;
-		}
-		if (collision(0, ya)) {
-			this.ya *= -1;
-			this.za *= -1;
-		}
+    public boolean collision(double xb, double yb) {
+        return level.tileCollision(xx, yy, 16, xb, yb + za, 0, 2.5);
+    }
 
-		this.xx += xa;
-		this.yy += ya;
-		this.zz += za;
-	}
-
-	public boolean collision(double xb, double yb) {
-		return level.tileCollision(xx, yy, 16, xb, yb + za, 0, 2.5);
-	}
-
-	public void render(Screen screen) {
-		screen.renderSprite((int) xx - 5, (int) (yy - zz) + 5, sprite, true);
-	}
+    public void render(SpriteBatch batch) {
+        batch.draw(sprite, (float) (xx - 5), (float) (yy - zz + 5));
+    }
 }

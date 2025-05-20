@@ -6,19 +6,57 @@ import com.southcentralpositronics.reign_gdx.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Spawner extends Entity {
+public abstract class Spawner extends Entity {
 
-	private final List<Entity> entities = new ArrayList<Entity>();
-	private final Type         type;
+    protected final List<Entity> spawnedEntities = new ArrayList<>();
+    protected final Type         type;
 
-	public Spawner(double x, double y, Type type, int amount, Level level) {
-		init(level);
-		this.x    = x;
-		this.y    = y;
-		this.type = type;
-	}
+    protected int     amountToSpawn;
+    protected int     spawnedCount = 0;
+    protected boolean finished     = false;
 
-	public enum Type {
-		MOD, PARTICLE
-	}
+    public Spawner(double x, double y, Type type, int amount, Level level) {
+        init(level);
+        this.x             = x;
+        this.y             = y;
+        this.type          = type;
+        this.amountToSpawn = amount;
+    }
+
+    /**
+     * Call this every frame to update spawner logic.
+     */
+    @Override
+    public void update() {
+        if (finished) return;
+
+        spawnEntities();
+
+        if (spawnedCount >= amountToSpawn) {
+            finished = true;
+            onFinished();
+        }
+    }
+
+    /**
+     * Spawn entities logic.
+     * Subclasses should override this method to control how entities are spawned.
+     */
+    protected abstract void spawnEntities();
+
+    /**
+     * Hook called once spawning is finished.
+     * By default, remove the spawner from the level.
+     */
+    protected void onFinished() {
+        remove();
+    }
+
+    public List<Entity> getSpawnedEntities() {
+        return spawnedEntities;
+    }
+
+    public enum Type {
+        MOD, PARTICLE
+    }
 }

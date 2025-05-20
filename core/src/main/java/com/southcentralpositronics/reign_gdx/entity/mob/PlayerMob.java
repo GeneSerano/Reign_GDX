@@ -1,5 +1,6 @@
 package com.southcentralpositronics.reign_gdx.entity.mob;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.southcentralpositronics.reign_gdx.Game;
 import com.southcentralpositronics.reign_gdx.entity.projectile.Projectile;
@@ -16,11 +17,11 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class PlayerMob extends Mob implements EventListener {
-    private final Keyboard  input;
-    private final String    name;
-    private final double    speed    = 2;
-    private       boolean   shooting = false;
-    public        long      score    = 0;
+    private final Keyboard input;
+    private final String   name;
+    private final double   speed    = 2;
+    private       boolean  shooting = false;
+    public        long     score    = 0;
 
     public PlayerMob(String name, Keyboard input) {
         this(Game.screenCenter[0], Game.screenCenter[1], name, input);
@@ -34,44 +35,44 @@ public class PlayerMob extends Mob implements EventListener {
         this.health = 1.0;
         this.type   = Type.PLAYER;
 
-        // Load animations from a TextureAtlas
-        TextureAtlas atlas = Game.atlas; // Make sure this is initialized before calling PlayerMob
-        mobUp    = new LibGDXAnimatedSprite(atlas.findRegions("player_up"), 0.2f);
-        mobDown  = new LibGDXAnimatedSprite(atlas.findRegions("player_down"), 0.2f);
-        mobLeft  = new LibGDXAnimatedSprite(atlas.findRegions("player_left"), 0.2f);
-        mobRight = new LibGDXAnimatedSprite(atlas.findRegions("player_right"), 0.2f);
+        // Load animations from atlas
+        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("resources/atlas/Mobs.atlas"));
 
-        animSprite = mobDown; // initial direction
+        mobUp    = new LibGDXAnimatedSprite(atlas, "King_Cherno_Up", 0.2f, true);
+        mobDown  = new LibGDXAnimatedSprite(atlas, "King_Cherno_Down", 0.2f, true);
+        mobLeft  = new LibGDXAnimatedSprite(atlas, "King_Cherno_Left", 0.2f, true);
+        mobRight = new LibGDXAnimatedSprite(atlas, "King_Cherno_Right", 0.2f, true);
+
+        animSprite = mobDown;
     }
 
     @Override
     public void update() {
+        double    xa        = 0, ya = 0;
+        Direction direction = null;
 
-        double xa = 0, ya = 0;
         if (input.up) {
-            animSprite = mobUp;
             ya -= speed;
+            direction = Direction.UP;
         } else if (input.down) {
-            animSprite = mobDown;
             ya += speed;
+            direction = Direction.DOWN;
         }
+
         if (input.left) {
-            animSprite = mobLeft;
             xa -= speed;
+            direction = Direction.LEFT;
         } else if (input.right) {
-            animSprite = mobRight;
             xa += speed;
+            direction = Direction.RIGHT;
         }
 
-        if (xa != 0 || ya != 0) {
+        boolean isMoving = xa != 0 || ya != 0;
+        if (isMoving) {
             move(xa, ya);
-            walking = true;
-            animSprite.update();
-        } else {
-            walking = false;
-            animSprite.setFrame(0);
         }
 
+        updateAnimation(Gdx.graphics.getDeltaTime(), isMoving, direction);
         updateShooting();
         checkForHit();
         clearProjectiles();
@@ -124,6 +125,7 @@ public class PlayerMob extends Mob implements EventListener {
         return false;
     }
 
+    @Override
     public void onEvent(Event event) {
         EventDispatcher dispatcher = new EventDispatcher(event);
         dispatcher.dispatch(Event.Type.MOUSE_PRESSED, e -> onMousePressed((MousePressedEvent) e));
