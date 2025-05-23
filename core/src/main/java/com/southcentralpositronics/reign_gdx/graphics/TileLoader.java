@@ -1,14 +1,15 @@
 package com.southcentralpositronics.reign_gdx.graphics;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.southcentralpositronics.reign_gdx.level.tile.Tile;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TileLoader {
 
-    // Color constants for the map (ARGB8888 format)
+    // Color constants (ARGB8888)
     public static final int COLOR_GRASS   = 0xFF125B0A;
     public static final int COLOR_HEDGE   = 0xFF004B00;
     public static final int COLOR_WATER   = 0xFFC4DBFF;
@@ -17,29 +18,24 @@ public class TileLoader {
     public static final int COLOR_FLOOR   = 0xFF434343;
     public static final int COLOR_VOID    = 0xFF280A2B;
 
-    /**
-     * Loads a mapping from color constants to tile Pixmaps.
-     *
-     * @param folderPath Folder containing the tile PNGs
-     * @return Map from color code to tile Pixmap
-     */
-    public static Map<Integer, Pixmap> loadTileSet(String folderPath) {
-        Map<Integer, Pixmap> tileSet = new HashMap<>();
+    public static Map<Integer, Tile> loadTiles(TextureAtlas atlas) {
+        Map<Integer, Tile> tileMap = new HashMap<>();
 
-        tileSet.put(COLOR_GRASS, loadPixmap(folderPath + "/spawn_grass.png"));
-        tileSet.put(COLOR_HEDGE, loadPixmap(folderPath + "/spawn_hedge.png"));
-        tileSet.put(COLOR_WATER, loadPixmap(folderPath + "/spawn_water.png"));
-        tileSet.put(COLOR_WALL, loadPixmap(folderPath + "/spawn_wall.png"));
-        tileSet.put(COLOR_WALLALT, loadPixmap(folderPath + "/spawn_wall_alt.png"));
-        tileSet.put(COLOR_FLOOR, loadPixmap(folderPath + "/spawn_floor.png"));
+        tileMap.put(COLOR_GRASS,   createTile(Tile.tileType.grass, false, atlas, "grass"));
+        tileMap.put(COLOR_HEDGE,   createTile(Tile.tileType.hedge, false, atlas, "hedge"));
+        tileMap.put(COLOR_WATER,   createTile(Tile.tileType.water, false, atlas, "water"));
+        tileMap.put(COLOR_WALL,    createTile(Tile.tileType.wall, true,  atlas, "wall"));
+        tileMap.put(COLOR_WALLALT, createTile(Tile.tileType.wall_alt, true, atlas, "wall_alt"));
+        tileMap.put(COLOR_FLOOR,   createTile(Tile.tileType.floor, false, atlas, "floor"));
+        tileMap.put(COLOR_VOID,    createTile(Tile.tileType.void_tile, false, atlas, "void_tile")); // fallback
 
-        // Void tile fallback
-        tileSet.put(COLOR_VOID, loadPixmap(folderPath + "/void_tile.png"));
-
-        return tileSet;
+        return tileMap;
     }
 
-    private static Pixmap loadPixmap(String path) {
-        return new Pixmap(Gdx.files.internal(path));
+    private static Tile createTile(Tile.tileType type, boolean solid, TextureAtlas atlas, String regionName) {
+        Tile tile = new Tile(type, solid);
+        tile.setTexture(atlas.findRegion(regionName));
+        return tile;
     }
+
 }

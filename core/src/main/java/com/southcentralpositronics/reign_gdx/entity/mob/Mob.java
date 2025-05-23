@@ -3,7 +3,6 @@ package com.southcentralpositronics.reign_gdx.entity.mob;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.southcentralpositronics.reign_gdx.Game;
 import com.southcentralpositronics.reign_gdx.entity.Entity;
 import com.southcentralpositronics.reign_gdx.entity.projectile.Projectile;
 import com.southcentralpositronics.reign_gdx.entity.projectile.SpellProjectile;
@@ -17,22 +16,24 @@ import java.util.List;
 public class Mob extends Entity {
     protected static final int DETECTION_DISTANCE = 100;
 
-    protected final int collisionOffsetX;
-    protected final int collisionOffsetY;
-
-    protected boolean walking = false;
-
-    protected LibGDXAnimatedSprite animSprite;
     protected LibGDXAnimatedSprite mobUp, mobDown, mobLeft, mobRight;
-    protected Direction dir = Direction.DOWN;
+    protected LibGDXAnimatedSprite animSprite;
+    protected Direction            dir;
 
-    protected double health;
+    protected int     collisionOffsetX;
+    protected int     collisionOffsetY;
+    protected boolean walking;
+    protected       double       health;
+    protected       TextureAtlas atlas;
 
-    public Mob() {
+
+    public Mob(String path) {
+        walking          = false;
+        dir              = Direction.DOWN;
         collisionOffsetX = -24;
         collisionOffsetY = -32;
 
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("resources/atlas/Mobs.atlas"));
+        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(path));
 
         mobUp    = new LibGDXAnimatedSprite(atlas, "King_Berno_Up", 0.2f, true);
         mobDown  = new LibGDXAnimatedSprite(atlas, "King_Berno_Down", 0.2f, true);
@@ -75,12 +76,12 @@ public class Mob extends Entity {
     }
 
     protected void shootAtPos(int x, int y, double angle) {
-        Projectile projectile = new SpellProjectile(x, y - 16, angle, this);
+        Projectile projectile = new SpellProjectile(x, y - 16, angle, this, atlas);
         level.add(projectile);
     }
 
     protected void shootClosest() {
-        if (Game.updateInt % Projectile.SHOT_DELAY != 0) return;
+//        if (Game.updateInt % Projectile.SHOT_DELAY != 0) return;
 
         PlayerMob       closestPlayer = null;
         List<PlayerMob> players       = level.getPlayersInRadius(this, DETECTION_DISTANCE);
@@ -144,8 +145,8 @@ public class Mob extends Entity {
     }
 
 
-    protected boolean collision(double xa, double ya) {
-        return level.tileCollision(x, y, 14, xa, ya, 0, 0);
+    protected boolean collision(double x, double y) {
+        return level.tileCollision(x, y);
     }
 
     public enum Direction {

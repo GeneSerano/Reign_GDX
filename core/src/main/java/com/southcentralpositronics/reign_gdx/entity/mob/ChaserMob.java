@@ -7,7 +7,8 @@ public class ChaserMob extends Mob {
     private       double ya    = 0;
     private final double speed = 0.8;
 
-    public ChaserMob(int x, int y) {
+    public ChaserMob(int x, int y, String path) {
+        super(path);
         this.x          = x << 4;
         this.y          = y << 4;
         this.animSprite = mobDown; // Ensure mobDown is set after construction

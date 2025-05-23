@@ -15,6 +15,7 @@ public class Entity {
     protected       Level   level;
     protected       boolean removed = false;
     protected       Type    type;
+    protected       double  nextX, nextY;
 
     public Entity() {
     }

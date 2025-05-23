@@ -1,95 +1,86 @@
 package com.southcentralpositronics.reign_gdx.input;
 
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.southcentralpositronics.reign_gdx.events.EventListener;
 import com.southcentralpositronics.reign_gdx.events.types.MouseMovedEvent;
 import com.southcentralpositronics.reign_gdx.events.types.MousePressedEvent;
 import com.southcentralpositronics.reign_gdx.events.types.MouseReleasedEvent;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.concurrent.TimeUnit;
+public class Mouse implements InputProcessor {
 
-public class Mouse implements MouseListener, MouseMotionListener {
-	private static int           mouseB = -1;
-	private static int           x      = -1;
-	private static int           y      = -1;
-	private final  EventListener eventListener;
+    private static int mouseB = -1;
+    private static int x = -1;
+    private static int y = -1;
 
-	public Mouse(EventListener eventListener) {
-		this.eventListener = eventListener;
-	}
+    private final EventListener eventListener;
 
-	public static int getX() {
-		return x;
-	}
+    public Mouse(EventListener eventListener) {
+        this.eventListener = eventListener;
+    }
 
-	public static int getY() {
-		return y;
-	}
+    public static int getX() {
+        return x;
+    }
 
-	public static int getMouseButton() {
-		return mouseB;
-	}
+    public static int getY() {
+        return y;
+    }
 
+    public static int getMouseButton() {
+        return mouseB;
+    }
 
-	@Override
-	public void mouseMoved(MouseEvent mouseEvent) {
-		x = mouseEvent.getX();
-		y = mouseEvent.getY();
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        x = screenX;
+        y = screenY;
 
-		MouseMovedEvent event = new MouseMovedEvent(x, y, false);
-		eventListener.onEvent(event);
-	}
+        MouseMovedEvent event = new MouseMovedEvent(x, y, false);
+        eventListener.onEvent(event);
+        return true;
+    }
 
-	@Override
-	public void mousePressed(MouseEvent mouseEvent) {
-		mouseB = mouseEvent.getButton();
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        x = screenX;
+        y = screenY;
 
-		MousePressedEvent event = new MousePressedEvent(mouseB, x, y);
-		eventListener.onEvent(event);
+        MouseMovedEvent event = new MouseMovedEvent(x, y, true);
+        eventListener.onEvent(event);
+        return true;
+    }
 
-	}
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        x = screenX;
+        y = screenY;
+        mouseB = button;
 
-	@Override
-	public void mouseReleased(MouseEvent mouseEvent) {
-		mouseB = MouseEvent.NOBUTTON;
-		MouseReleasedEvent event = new MouseReleasedEvent(mouseB, x, y);
-		eventListener.onEvent(event);
-	}
+        MousePressedEvent event = new MousePressedEvent(mouseB, x, y);
+        eventListener.onEvent(event);
+        return true;
+    }
 
-	@Override
-	public void mouseClicked(MouseEvent mouseEvent) {
-		mouseB = mouseEvent.getButton();
-		try {
-			TimeUnit.MILLISECONDS.sleep(50);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
-		mouseB = -1;
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        x = screenX;
+        y = screenY;
+        mouseB = Input.Buttons.LEFT; // Default/fallback
+        MouseReleasedEvent event = new MouseReleasedEvent(button, x, y);
+        eventListener.onEvent(event);
+        return true;
+    }
 
-	}
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
 
-	@Override
-	public void mouseEntered(MouseEvent mouseEvent) {
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent mouseEvent) {
-		x = -1;
-		y = -1;
-
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent mouseEvent) {
-		x = mouseEvent.getX();
-		y = mouseEvent.getY();
-
-		MouseMovedEvent event = new MouseMovedEvent(x, y, true);
-		eventListener.onEvent(event);
-	}
-
+    // Unused input events
+    @Override public boolean keyDown(int keycode) { return false; }
+    @Override public boolean keyUp(int keycode) { return false; }
+    @Override public boolean keyTyped(char character) { return false; }
+    @Override public boolean scrolled(float amountX, float amountY) { return false; }
 
 }

@@ -6,7 +6,8 @@ public class DummyMob extends Mob {
     private float time                 = 0;
     private float directionChangeTimer = 0;
 
-    public DummyMob(int x, int y) {
+    public DummyMob(int x, int y, String path) {
+        super(path);
         this.x          = x << 4;
         this.y          = y << 4;
         this.animSprite = mobDown; // ensure mobDown is set externally

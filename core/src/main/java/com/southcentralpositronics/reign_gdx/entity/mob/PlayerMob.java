@@ -17,32 +17,33 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class PlayerMob extends Mob implements EventListener {
-    private final Keyboard input;
-    private final String   name;
-    private final double   speed    = 2;
-    private       boolean  shooting = false;
-    public        long     score    = 0;
+    private final Keyboard keyboard;
+    private       String   name;
 
-    public PlayerMob(String name, Keyboard input) {
-        this(Game.screenCenter[0], Game.screenCenter[1], name, input);
-    }
+    private final double  speed    = 2;
+    private       boolean shooting = false;
+    public        long    score    = 0;
 
-    public PlayerMob(int x, int y, String name, Keyboard input) {
-        this.x      = x;
-        this.y      = y;
-        this.input  = input;
-        this.name   = name;
-        this.health = 1.0;
-        this.type   = Type.PLAYER;
+    public PlayerMob(int x, int y, String name, Keyboard keyboard, String path) {
+        super(path);
+        this.x        = x;
+        this.y        = y;
+        this.keyboard = keyboard;
+        this.name     = name;
+        this.health   = 1.0;
+        this.type     = Type.PLAYER;
+        walking          = false;
+        dir              = Direction.DOWN;
+        collisionOffsetX = -24;
+        collisionOffsetY = -32;
 
-        // Load animations from atlas
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("resources/atlas/Mobs.atlas"));
+        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(path));
 
         mobUp    = new LibGDXAnimatedSprite(atlas, "King_Cherno_Up", 0.2f, true);
         mobDown  = new LibGDXAnimatedSprite(atlas, "King_Cherno_Down", 0.2f, true);
         mobLeft  = new LibGDXAnimatedSprite(atlas, "King_Cherno_Left", 0.2f, true);
         mobRight = new LibGDXAnimatedSprite(atlas, "King_Cherno_Right", 0.2f, true);
-
+        atlas.dispose();
         animSprite = mobDown;
     }
 
@@ -51,18 +52,18 @@ public class PlayerMob extends Mob implements EventListener {
         double    xa        = 0, ya = 0;
         Direction direction = null;
 
-        if (input.up) {
+        if (keyboard.up) {
             ya -= speed;
             direction = Direction.UP;
-        } else if (input.down) {
+        } else if (keyboard.down) {
             ya += speed;
             direction = Direction.DOWN;
         }
 
-        if (input.left) {
+        if (keyboard.left) {
             xa -= speed;
             direction = Direction.LEFT;
-        } else if (input.right) {
+        } else if (keyboard.right) {
             xa += speed;
             direction = Direction.RIGHT;
         }

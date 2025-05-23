@@ -14,10 +14,10 @@ public abstract class Projectile extends Entity {
     protected Vector2 origin;
     protected Vector2 velocity;
 
-    protected float angle;
-    protected float speed;
-    protected float range;
-    protected float damage;
+    protected double angle;
+    protected double speed;
+    protected double range;
+    protected double damage;
 
     protected TextureRegion texture;
     protected Entity        firedBy;
@@ -25,9 +25,9 @@ public abstract class Projectile extends Entity {
     public int collisionOffsetX = -12;
     public int collisionOffsetY = -2;
 
-    public Projectile(float x, float y, float direction) {
-        this.position = new Vector2(x, y);
-        this.origin   = new Vector2(x, y);
+    public Projectile(double x, double y, double direction) {
+        this.position = new Vector2((float) x, (float) y);
+        this.origin   = new Vector2((float) x, (float) y);
         this.angle    = direction;
 
         this.velocity = new Vector2((float) Math.cos(direction), (float) Math.sin(direction));
@@ -36,8 +36,8 @@ public abstract class Projectile extends Entity {
     public void update(float delta) {
         if (removed) return;
 
-        Vector2 nextPos = position.cpy().add(velocity.x * speed, velocity.y * speed);
-        boolean hitWall = level.tileCollision(position.x, position.y, 7, velocity.x * speed, velocity.y * speed, -8, -8);
+        Vector2 nextPos = position.cpy().add((float) (velocity.x * speed), (float) (velocity.y * speed));
+        boolean hitWall = level.tileCollision(position.x+(velocity.x * speed), position.y+(velocity.y * speed));
 
         if (hitWall) {
             remove();
@@ -78,11 +78,11 @@ public abstract class Projectile extends Entity {
         return firedBy;
     }
 
-    public float getX() {
+    public double getX() {
         return position.x;
     }
 
-    public float getY() {
+    public double getY() {
         return position.y;
     }
 

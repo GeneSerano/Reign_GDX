@@ -10,7 +10,8 @@ public class ShooterMob extends Mob {
     private float directionChangeTimer = 0;
     private float shootCooldown        = 0;
 
-    public ShooterMob(int x, int y) {
+    public ShooterMob(int x, int y, String path) {
+        super(path);
         this.x          = x << 4;
         this.y          = y << 4;
         this.animSprite = mobDown; // Ensure animations are injected externally

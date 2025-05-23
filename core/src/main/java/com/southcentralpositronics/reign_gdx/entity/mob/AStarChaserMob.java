@@ -12,7 +12,8 @@ public class AStarChaserMob extends Mob {
     private       List<Node> path      = null;
     private       float      pathTimer = 0f; // in seconds
 
-    public AStarChaserMob(int x, int y) {
+    public AStarChaserMob(int x, int y, String path) {
+        super(path);
         // These should be set by the caller after loading from TextureAtlas
         this.x          = x << 4;
         this.y          = y << 4;

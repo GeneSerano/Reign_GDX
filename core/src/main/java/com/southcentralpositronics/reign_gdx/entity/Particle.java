@@ -1,16 +1,16 @@
 package com.southcentralpositronics.reign_gdx.entity;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.southcentralpositronics.reign_gdx.level.Level;
 
 public class Particle extends Entity {
     protected double xx, yy, zz, xa, ya, za;
-    private final int           life;
-    private       int           time = 0;
-    private final TextureRegion sprite;
+    private final int    life;
+    private       int    time = 0;
+    private final Sprite sprite;
 
-    public Particle(double x, double y, double angle, int life, Level level, TextureRegion sprite) {
+    public Particle(double x, double y, double angle, int life, Level level) {
         this.x    = x;
         this.y    = y;
         this.xx   = x;
@@ -20,7 +20,8 @@ public class Particle extends Entity {
         this.ya   = random.nextGaussian();
         this.zz   = random.nextFloat() + 2.0;
 
-        this.sprite = sprite;  // Injected texture region
+        sprite = new Sprite();
+        sprite.setColor(255f, 0f, 0f, 1f);  // Injected texture region
         init(level);
     }
 
@@ -61,7 +62,7 @@ public class Particle extends Entity {
     }
 
     public boolean collision(double xb, double yb) {
-        return level.tileCollision(xx, yy, 16, xb, yb + za, 0, 2.5);
+        return level.tileCollision(xx + xb, yy + yb);
     }
 
     public void render(SpriteBatch batch) {

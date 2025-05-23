@@ -1,41 +1,32 @@
 package com.southcentralpositronics.reign_gdx.level.tile;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Tile {
     public int x, y;
-    public Sprite  sprite;
-    public boolean isSolid = false;
+    public boolean       isSolid   = false;
+    public tileType      tile_Type = tileType.void_tile;
+    public TextureRegion texture;  // NEW
 
-    public Tile(Sprite sprite) {
-        this.sprite = sprite;
+    public Tile(tileType tileType, boolean isSolid) {
+        this.tile_Type = tileType;
+        this.isSolid   = isSolid;
     }
 
-    /**
-     * Render this tile at the given tile coordinates,
-     * applying the scroll offsets for camera movement.
-     *
-     * @param batch   The SpriteBatch to draw with
-     * @param xScroll The x camera offset in pixels
-     * @param yScroll The y camera offset in pixels
-     */
-    public void render(SpriteBatch batch, int xScroll, int yScroll) {
-        if (sprite == null) return;
-
-        // Calculate screen position by shifting tile coords by tile size (16) and subtracting scroll
-        float screenX = (x << 4) - xScroll;
-        float screenY = (y << 4) - yScroll;
-
-        sprite.setPosition(screenX, screenY);
-        sprite.draw(batch);
+    public void setTexture(TextureRegion texture) {
+        this.texture = texture;
     }
 
-    /**
-     * Whether this tile blocks movement.
-     * Override in subclasses as needed.
-     */
+    public TextureRegion getTexture() {
+        return texture;
+    }
+
     public boolean isSolid() {
         return isSolid;
     }
+
+    public enum tileType {
+        floor, grass, hedge, wall, wall_alt, water, void_tile
+    }
+
 }

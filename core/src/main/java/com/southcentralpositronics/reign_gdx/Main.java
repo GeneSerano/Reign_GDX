@@ -36,27 +36,26 @@ public class Main extends ApplicationAdapter {
 //        image = new Texture("textures/levels/SpawnLevel.png");
 //        Map<Integer, Pixmap> tileSet = TileLoader.loadTileSet("core/src/main/resources/spawn_level_tiles/");
 
-        FileHandle PixelMap       = Gdx.files.internal("textures/levels/SpawnLevel_v20.png");
-        String     tileFolderPath = "core/src/main/resources/spawn_level_tiles/";
-        Gdx.graphics.setWindowedMode(screemDem.x, screemDem.y);
-
-        long startTime = System.nanoTime();
-
-        Pixmap               colorMap      = new Pixmap(PixelMap);
-        Map<Integer, Pixmap> tileSet       = TileLoader.loadTileSet(tileFolderPath);
-        Pixmap               tileMapPixmap = TileMapBuilder.buildTileMapPixmap(colorMap, tileSet, 16, TileLoader.COLOR_VOID);
-        tileMapTexture = new Texture(tileMapPixmap);
-        tileMapPixmap.dispose();
-
-        long endTime      = System.nanoTime();
-        long durationInMs = (endTime - startTime) / 1_000_000;
-
-        System.out.println("Tile map Pixmap generated in " + durationInMs + " ms");
-
-        camera   = new OrthographicCamera();
-        viewport = new StretchViewport(screemDem.x / scaleFactor, screemDem.y / scaleFactor, camera);
-        viewport.apply();
-        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
+//        FileHandle PixelMap       = Gdx.files.internal("textures/levels/SpawnLevel_v20.png");
+//        Pixmap               colorMap      = new Pixmap(PixelMap);
+//
+//        Gdx.graphics.setWindowedMode(screemDem.x, screemDem.y);
+//
+//        long startTime = System.nanoTime();
+//
+//        Pixmap               tileMapPixmap = TileMapBuilder.buildTileMapPixmap(colorMap, 16, TileLoader.COLOR_VOID);
+//        tileMapTexture = new Texture(tileMapPixmap);
+//        tileMapPixmap.dispose();
+//
+//        long endTime      = System.nanoTime();
+//        long durationInMs = (endTime - startTime) / 1_000_000;
+//
+//        System.out.println("Tile map Pixmap generated in " + durationInMs + " ms");
+//
+//        camera   = new OrthographicCamera();
+//        viewport = new StretchViewport(screemDem.x / scaleFactor, screemDem.y / scaleFactor, camera);
+//        viewport.apply();
+//        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
 
 //        Game game = new Game();
 //        game.frame.setResizable(true);
