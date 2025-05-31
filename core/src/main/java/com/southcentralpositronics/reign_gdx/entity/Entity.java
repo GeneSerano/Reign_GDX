@@ -8,14 +8,18 @@ import com.southcentralpositronics.reign_gdx.level.Level;
 import java.util.Random;
 
 public class Entity {
+    protected int paddingLeft, paddingRight, paddingTop, paddingBottom;
     protected final Random  random  = new Random();
+    protected       boolean removed = false;
+    protected       int     life;
+    protected       int     time    = 0;
     protected       double  x;
     protected       double  y;
+    protected       double  nextX;
+    protected       double  nextY;
     protected       Sprite  sprite;
     protected       Level   level;
-    protected       boolean removed = false;
     protected       Type    type;
-    protected       double  nextX, nextY;
 
     public Entity() {
     }
@@ -43,14 +47,15 @@ public class Entity {
     }
 
     public void render(SpriteBatch batch, int xScroll, int yScroll) {
-        if (sprite == null) return;
-
-        // Calculate screen position relative to camera scroll
-        float renderX = (float) (x - xScroll);
-        float renderY = (float) (y - yScroll);
-
-        sprite.setPosition(renderX, renderY);
-        sprite.draw(batch);
+//        if (sprite == null) return;
+//
+//        // Calculate screen position relative to camera scroll
+//        float renderX = (float) (x - xScroll);
+//        float renderY = (float) (y - yScroll);
+//        renderX = 0;
+//        renderY = 0;
+//        sprite.setPosition(renderX, renderY);
+//        sprite.draw(batch);
     }
 
     public Sprite getSprite() {

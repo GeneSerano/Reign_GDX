@@ -13,7 +13,6 @@ public class AStarChaserMob extends Mob {
     private       float      pathTimer = 0f; // in seconds
 
     public AStarChaserMob(int x, int y, String path) {
-        super(path);
         // These should be set by the caller after loading from TextureAtlas
         this.x          = x << 4;
         this.y          = y << 4;
@@ -68,12 +67,12 @@ public class AStarChaserMob extends Mob {
 
         // Set direction based on movement
         if (Math.abs(ya) > Math.abs(xa)) {
-            dir = ya < 0 ? Direction.UP : Direction.DOWN;
+            direction = ya < 0 ? Direction.UP : Direction.DOWN;
         } else if (xa != 0) {
-            dir = xa < 0 ? Direction.LEFT : Direction.RIGHT;
+            direction = xa < 0 ? Direction.LEFT : Direction.RIGHT;
         }
 
         // Call Mob's animation update
-        super.updateAnimation(delta, walking, dir);
+        super.updateAnimation(delta, walking, direction);
     }
 }

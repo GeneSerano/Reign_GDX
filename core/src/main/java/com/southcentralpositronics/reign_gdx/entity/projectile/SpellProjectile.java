@@ -10,7 +10,7 @@ public class SpellProjectile extends Projectile {
         this.firedBy = firedBy;
 
         // Get the rotated region if needed — or just use the raw region
-        this.texture = atlas.findRegion("spell_fireball");
+        texture = atlas.findRegion("fireball");
 
         this.range  = 150; // Could randomize if needed
         this.damage = 2000;

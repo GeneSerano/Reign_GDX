@@ -8,7 +8,6 @@ public class ChaserMob extends Mob {
     private final double speed = 0.8;
 
     public ChaserMob(int x, int y, String path) {
-        super(path);
         this.x          = x << 4;
         this.y          = y << 4;
         this.animSprite = mobDown; // Ensure mobDown is set after construction
@@ -42,12 +41,12 @@ public class ChaserMob extends Mob {
 
         // Determine direction
         if (Math.abs(ya) > Math.abs(xa)) {
-            dir = ya < 0 ? Direction.UP : Direction.DOWN;
+            direction = ya < 0 ? Direction.UP : Direction.DOWN;
         } else if (xa != 0) {
-            dir = xa < 0 ? Direction.LEFT : Direction.RIGHT;
+            direction = xa < 0 ? Direction.LEFT : Direction.RIGHT;
         }
 
         // Use Mob’s animation handling
-        super.updateAnimation(delta, walking, dir);
+        super.updateAnimation(delta, walking, direction);
     }
 }

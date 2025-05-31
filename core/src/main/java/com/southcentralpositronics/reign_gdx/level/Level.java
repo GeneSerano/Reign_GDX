@@ -5,6 +5,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.southcentralpositronics.reign_gdx.Game;
 import com.southcentralpositronics.reign_gdx.entity.Entity;
 import com.southcentralpositronics.reign_gdx.entity.Particle;
@@ -12,7 +13,6 @@ import com.southcentralpositronics.reign_gdx.entity.mob.Mob;
 import com.southcentralpositronics.reign_gdx.entity.mob.PlayerMob;
 import com.southcentralpositronics.reign_gdx.entity.projectile.Projectile;
 import com.southcentralpositronics.reign_gdx.entity.projectile.SpellProjectile;
-import com.southcentralpositronics.reign_gdx.events.Event;
 import com.southcentralpositronics.reign_gdx.graphics.TileLoader;
 import com.southcentralpositronics.reign_gdx.graphics.TileMapBuilder;
 import com.southcentralpositronics.reign_gdx.level.tile.Node;
@@ -32,22 +32,28 @@ public class Level {
     private       PlayerMob             player      = getClientPlayer();
 
     protected int width, height;
-    protected Tile[][] tiles;
+    public    Tile[][] tiles;
+    protected Viewport viewport;
+    protected Game     game;
 
     private int xScroll, yScroll;
 
-    public Level(String atlasPath, String mapPath) {
-        loadLevel(atlasPath, mapPath);
+    public Level(Game game) {
+        this.game = game;
+        loadLevel(game.getTileAtlas(), game.getMapPath());
+    }
+
+    public ArrayList<PlayerMob> getPlayers() {
+        return players;
     }
 
     protected void generateLevel(Pixmap colorMap, Map<Integer, Tile> tileMap) {
         tiles = TileMapBuilder.buildTileGrid(colorMap, tileMap);
     }
 
-    protected void loadLevel(String atlasPath, String mapPath) {
-        TextureAtlas tileAtlas = new TextureAtlas(Gdx.files.internal(atlasPath));
-        FileHandle   PixelMap  = Gdx.files.internal(mapPath);
-        Pixmap       colorMap  = new Pixmap(PixelMap);
+    protected void loadLevel(TextureAtlas tileAtlas, String mapPath) {
+        FileHandle PixelMap = Gdx.files.internal(mapPath);
+        Pixmap     colorMap = new Pixmap(PixelMap);
         width  = colorMap.getWidth();
         height = colorMap.getHeight();
         Map<Integer, Tile> tileMap = TileLoader.loadTiles(tileAtlas);
@@ -73,23 +79,24 @@ public class Level {
 
     public void render(SpriteBatch batch) {
         int tileSize     = 16; // Assuming tiles are 16x16 pixels
-        int screenWidth  = Game.WIDTH / Game.SCALE;
-        int screenHeight = Game.HEIGHT / Game.SCALE;
-        setScroll((int) (player.getX() - (double) screenWidth / 2),
-                  (int) (player.getY() - (double) screenHeight / 2));
+        int screenWidth  = Game.VIEWPORT_WIDTH;
+        int screenHeight = Game.VIEWPORT_HEIGHT;
+        setScroll((int) (player.getX() - (double) screenWidth / 2), (int) (player.getY() - (double) screenHeight / 2));
+
+        xScroll = 0;
+        yScroll = 0;
 
         int x0 = xScroll / tileSize;
         int x1 = (xScroll + screenWidth + tileSize) / tileSize;
         int y0 = yScroll / tileSize;
         int y1 = (yScroll + screenHeight + tileSize) / tileSize;
 
-        renderTiles(batch, tiles, 0, 0, tileSize);
-//        renderTiles(batch, tiles, xScroll, yScroll, tileSize);
+        renderTiles(batch, tiles, xScroll, yScroll, tileSize);
 
         // Render entities
         for (Entity e : entities) e.render(batch, xScroll, yScroll);
-        for (Particle p : particles) p.render(batch, xScroll, yScroll);
-        for (Projectile p : projectiles) p.render(batch, xScroll, yScroll);
+        for (Particle p : particles) p.render(batch);
+        for (Projectile p : projectiles) p.render(batch);
         for (Mob m : mobs) m.render(batch, xScroll, yScroll);
         for (PlayerMob p : players) p.render(batch, xScroll, yScroll);
     }
@@ -168,12 +175,12 @@ public class Level {
         return result;
     }
 
-    public void onEvent(Event event) {
-        PlayerMob clientPlayer = getClientPlayer();
-        if (clientPlayer != null) {
-            clientPlayer.onEvent(event);
-        }
-    }
+//    public void onEvent(Event event) {
+//        PlayerMob clientPlayer = getClientPlayer();
+//        if (clientPlayer != null) {
+//            clientPlayer.onEvent(event);
+//        }
+//    }
 
     public void clearMobs() {
         mobs.clear();
@@ -183,19 +190,67 @@ public class Level {
         return projectiles;
     }
 
-    public boolean tileCollision(double x, double y) {
-        int tileSize = 16; // or your actual tile size
+    public boolean tileCollision(double x, double y, int width, int height, int padLeft, int padRight, int padTop, int padBottom) {
+        int tileSize = 16;
 
-        int tileX = (int) (x / tileSize);
-        int tileY = (int) (y / tileSize);
+        // Shrink the hitbox by the given paddings
+        double hitboxX      = x + padLeft;
+        double hitboxY      = y + padBottom;
+        int    hitboxWidth  = width - padLeft - padRight;
+        int    hitboxHeight = height - padTop - padBottom;
 
-        if (tileX < 0 || tileY < 0 || tileX >= tiles.length || tileY >= tiles[0].length) {
-            return true; // Out-of-bounds tiles are treated as solid
+        // Compute tile coordinates
+        int left   = (int) (hitboxX / tileSize);
+        int right  = (int) ((hitboxX + hitboxWidth - 1) / tileSize);
+        int top    = (int) (hitboxY / tileSize);
+        int bottom = (int) ((hitboxY + hitboxHeight - 1) / tileSize);
+
+        for (int tx = left; tx <= right; tx++) {
+            for (int ty = top; ty <= bottom; ty++) {
+                if (tx < 0 || ty < 0 || tx >= tiles.length || ty >= tiles[0].length) {
+                    return true; // Out of bounds = solid
+                }
+
+                Tile tile = tiles[tx][ty];
+                if (tile != null && tile.isSolid()) {
+                    return true;
+                }
+            }
         }
 
-        Tile tile = tiles[tileX][tileY];
-        return tile != null && tile.isSolid();
+        return false; // All tiles pass
     }
+
+    public boolean tileCollision(double x, double y, int width, int height) {
+        return tileCollision(x, y, width, height, 0, 0, 0, 0);
+    }
+
+//    public boolean tileCollision(double x, double y, int width, int height) {
+//        int tileSize = 16;
+//
+//        // Check all 4 corners
+//        int left   = (int) (x / tileSize);
+//        int right  = (int) ((x + width - 1) / tileSize);
+//        int top    = (int) (y / tileSize);
+//        int bottom = (int) ((y + height - 1) / tileSize);
+//
+//        // Check each tile the bounding box touches
+//        for (int tx = left; tx <= right; tx++) {
+//            for (int ty = top; ty <= bottom; ty++) {
+//                if (tx < 0 || ty < 0 || tx >= tiles.length || ty >= tiles[0].length) {
+//                    return true; // Out-of-bounds = solid
+//                }
+//
+//                Tile tile = tiles[tx][ty];
+//                if (tile != null && tile.isSolid()) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        return false; // All tiles pass
+//    }
+
 
     public void setPlayer(PlayerMob player) {
         this.player = player;
@@ -203,6 +258,22 @@ public class Level {
 
     public List<Node> findPath(Vector2i startVec, Vector2i destVec) {
         return List.of();
+    }
+
+    public ArrayList<Entity> getEntities() {
+        return entities;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public Game getGame() {
+        return game;
     }
 
     // Additional methods like generateMobs, findPath, tileCollision can be implemented similarly

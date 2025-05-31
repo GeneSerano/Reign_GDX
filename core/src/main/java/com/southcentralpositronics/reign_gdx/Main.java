@@ -34,7 +34,7 @@ public class Main extends ApplicationAdapter {
         screemDem   = new Vector2i(1920, 1080);
         scaleFactor = 4f;
 //        image = new Texture("textures/levels/SpawnLevel.png");
-//        Map<Integer, Pixmap> tileSet = TileLoader.loadTileSet("core/src/main/resources/spawn_level_tiles/");
+//        Map<Integer, Pixmap> tileSet = TileLoader.loadTileSet("spawn_level_tiles/");
 
 //        FileHandle PixelMap       = Gdx.files.internal("textures/levels/SpawnLevel_v20.png");
 //        Pixmap               colorMap      = new Pixmap(PixelMap);

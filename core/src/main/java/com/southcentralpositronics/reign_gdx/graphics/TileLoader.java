@@ -22,7 +22,7 @@ public class TileLoader {
         Map<Integer, Tile> tileMap = new HashMap<>();
 
         tileMap.put(COLOR_GRASS,   createTile(Tile.tileType.grass, false, atlas, "grass"));
-        tileMap.put(COLOR_HEDGE,   createTile(Tile.tileType.hedge, false, atlas, "hedge"));
+        tileMap.put(COLOR_HEDGE,   createTile(Tile.tileType.hedge, true, atlas, "hedge"));
         tileMap.put(COLOR_WATER,   createTile(Tile.tileType.water, false, atlas, "water"));
         tileMap.put(COLOR_WALL,    createTile(Tile.tileType.wall, true,  atlas, "wall"));
         tileMap.put(COLOR_WALLALT, createTile(Tile.tileType.wall_alt, true, atlas, "wall_alt"));

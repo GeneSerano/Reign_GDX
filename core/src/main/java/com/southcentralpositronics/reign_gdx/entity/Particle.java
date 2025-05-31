@@ -1,14 +1,16 @@
 package com.southcentralpositronics.reign_gdx.entity;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.southcentralpositronics.reign_gdx.level.Level;
 
 public class Particle extends Entity {
     protected double xx, yy, zz, xa, ya, za;
-    private final int    life;
-    private       int    time = 0;
-    private final Sprite sprite;
+
 
     public Particle(double x, double y, double angle, int life, Level level) {
         this.x    = x;
@@ -20,8 +22,15 @@ public class Particle extends Entity {
         this.ya   = random.nextGaussian();
         this.zz   = random.nextFloat() + 2.0;
 
-        sprite = new Sprite();
-        sprite.setColor(255f, 0f, 0f, 1f);  // Injected texture region
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.RED);
+        pixmap.fill();
+        Texture whitePixel = new Texture(pixmap);
+        pixmap.dispose();
+
+// Use it in your Particle constructor
+        sprite = new Sprite(new TextureRegion(whitePixel));
+        sprite.setColor(1f, 0f, 0f, 1f); // red
         init(level);
     }
 
@@ -62,7 +71,7 @@ public class Particle extends Entity {
     }
 
     public boolean collision(double xb, double yb) {
-        return level.tileCollision(xx + xb, yy + yb);
+        return level.tileCollision(xx + xb, yy + yb, 2, 2);
     }
 
     public void render(SpriteBatch batch) {

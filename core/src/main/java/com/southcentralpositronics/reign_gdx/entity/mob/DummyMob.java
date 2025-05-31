@@ -7,7 +7,6 @@ public class DummyMob extends Mob {
     private float directionChangeTimer = 0;
 
     public DummyMob(int x, int y, String path) {
-        super(path);
         this.x          = x << 4;
         this.y          = y << 4;
         this.animSprite = mobDown; // ensure mobDown is set externally
@@ -45,11 +44,11 @@ public class DummyMob extends Mob {
 
         // Determine direction
         if (Math.abs(ya) > Math.abs(xa)) {
-            dir = ya < 0 ? Direction.UP : Direction.DOWN;
+            direction = ya < 0 ? Direction.UP : Direction.DOWN;
         } else if (xa != 0) {
-            dir = xa < 0 ? Direction.LEFT : Direction.RIGHT;
+            direction = xa < 0 ? Direction.LEFT : Direction.RIGHT;
         }
 
-        super.updateAnimation(delta, walking, dir);
+        super.updateAnimation(delta, walking, direction);
     }
 }

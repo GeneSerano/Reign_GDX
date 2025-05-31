@@ -11,7 +11,6 @@ public class ShooterMob extends Mob {
     private float shootCooldown        = 0;
 
     public ShooterMob(int x, int y, String path) {
-        super(path);
         this.x          = x << 4;
         this.y          = y << 4;
         this.animSprite = mobDown; // Ensure animations are injected externally
@@ -50,12 +49,12 @@ public class ShooterMob extends Mob {
 
         // Determine facing direction
         if (Math.abs(ya) > Math.abs(xa)) {
-            dir = ya < 0 ? Direction.UP : Direction.DOWN;
+            direction = ya < 0 ? Direction.UP : Direction.DOWN;
         } else if (xa != 0) {
-            dir = xa < 0 ? Direction.LEFT : Direction.RIGHT;
+            direction = xa < 0 ? Direction.LEFT : Direction.RIGHT;
         }
 
-        super.updateAnimation(delta, walking, dir);
+        super.updateAnimation(delta, walking, direction);
     }
 
 //    private void shootClosest() {

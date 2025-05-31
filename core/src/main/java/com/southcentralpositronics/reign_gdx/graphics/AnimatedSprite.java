@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
-public class LibGDXAnimatedSprite {
+public class AnimatedSprite {
     private final Animation<TextureRegion> animation;
     private       float                    stateTime = 0f;
     private final boolean                  looping;
 
-    public LibGDXAnimatedSprite(TextureAtlas atlas, String regionName, float frameDuration, boolean looping) {
+    public AnimatedSprite(TextureAtlas atlas, String regionName, float frameDuration, boolean looping) {
         Array<TextureAtlas.AtlasRegion> regions = atlas.findRegions(regionName);
         if (regions == null || regions.size == 0) {
             throw new IllegalArgumentException("No regions found for: " + regionName);

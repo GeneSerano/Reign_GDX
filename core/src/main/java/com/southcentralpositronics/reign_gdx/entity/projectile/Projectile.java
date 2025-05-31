@@ -29,15 +29,23 @@ public abstract class Projectile extends Entity {
         this.position = new Vector2((float) x, (float) y);
         this.origin   = new Vector2((float) x, (float) y);
         this.angle    = direction;
-
+        paddingLeft   = 8;
+        paddingRight  = 8;
+        paddingTop    = 8;
+        paddingBottom = 8;
         this.velocity = new Vector2((float) Math.cos(direction), (float) Math.sin(direction));
     }
 
-    public void update(float delta) {
+    public void update() {
         if (removed) return;
-
-        Vector2 nextPos = position.cpy().add((float) (velocity.x * speed), (float) (velocity.y * speed));
-        boolean hitWall = level.tileCollision(position.x+(velocity.x * speed), position.y+(velocity.y * speed));
+        float   x       = position.x;
+        float   y       = position.y;
+        double  xDelta  = velocity.x * speed;
+        double  yDelta  = velocity.y * speed;
+        int     width   = texture.getRegionWidth();
+        int     height  = texture.getRegionHeight();
+        Vector2 nextPos = position.cpy().add((float) xDelta, (float) yDelta);
+        boolean hitWall = level.tileCollision(x + xDelta, y + yDelta, width, height, paddingLeft, paddingRight, paddingTop, paddingBottom);
 
         if (hitWall) {
             remove();
